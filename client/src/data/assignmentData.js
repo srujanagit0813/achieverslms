@@ -1,0 +1,148 @@
+const assignmentData = {
+  '1': {
+    title: 'Web Development',
+    lessons: [
+      {
+        id: 'lesson1',
+        title: 'HTML Basics',
+        assignments: [
+          {
+            id: 'a1',
+            title: 'HTML Structure Assignment',
+            description: 'Create a basic HTML document using all essential tags.',
+            dueDate: '2025-06-20T23:59:00',
+            downloadLink: 'https://example.com/html-structure.pdf',
+            submitStatus: 'Not Submitted',
+            status: 'Pending',
+          },
+          {
+            id: 'a2',
+            title: 'Form Elements Task',
+            description: 'Design an HTML form with input, select, and textarea fields.',
+            dueDate: '2025-06-21T23:59:00',
+            downloadLink: 'https://example.com/html-form.pdf',
+            submitStatus: 'Not Submitted',
+            status: 'Pending',
+          },
+          {
+            id: 'a3',
+            title: 'Semantic Tags Assignment',
+            description: 'Use semantic HTML tags to structure a blog post.',
+            dueDate: '2025-06-22T23:59:00',
+            downloadLink: 'https://example.com/semantic-tags.pdf',
+            submitStatus: 'Submitted',
+            status: 'Completed',
+          },
+          {
+            id: 'a4',
+            title: 'List and Table Assignment',
+            description: 'Create lists and tables in HTML with proper formatting.',
+            dueDate: '2025-06-23T23:59:00',
+            downloadLink: 'https://example.com/html-lists-tables.pdf',
+            submitStatus: 'Not Submitted',
+            status: 'Pending',
+          },
+        ],
+      },
+      {
+        id: 'lesson2',
+        title: 'CSS Essentials',
+        assignments: [
+          {
+            id: 'a5',
+            title: 'CSS Selectors Task',
+            description: 'Practice different CSS selectors to style HTML elements.',
+            dueDate: '2025-06-22T23:59:00',
+            downloadLink: 'https://example.com/css-selectors.pdf',
+            submitStatus: 'Submitted',
+            status: 'Completed',
+          },
+          {
+            id: 'a6',
+            title: 'Box Model Exercise',
+            description: 'Implement padding, margin, and border using box model.',
+            dueDate: '2025-06-24T23:59:00',
+            downloadLink: 'https://example.com/css-box-model.pdf',
+            submitStatus: 'Not Submitted',
+            status: 'Pending',
+          },
+          {
+            id: 'a7',
+            title: 'Flexbox Layout',
+            description: 'Create a responsive layout using CSS Flexbox.',
+            dueDate: '2025-06-25T23:59:00',
+            downloadLink: 'https://example.com/css-flexbox.pdf',
+            submitStatus: 'Not Submitted',
+            status: 'Pending',
+          },
+          {
+            id: 'a8',
+            title: 'CSS Animations',
+            description: 'Add basic animations to elements using CSS.',
+            dueDate: '2025-06-26T23:59:00',
+            downloadLink: 'https://example.com/css-animations.pdf',
+            submitStatus: 'Not Submitted',
+            status: 'Pending',
+          },
+        ],
+      },
+      {
+        id: 'lesson3',
+        title: 'javascript basics',
+       },
+        {
+        id: 'lesson4',
+        title: 'javascript Essentials',
+        },
+    ],
+  },
+  '2': {
+    title: 'React for Beginners',
+    lessons: [
+      {
+        id: 'lesson1',
+        title: 'JSX & Components',
+        assignments: [
+          {
+            id: 'a9',
+            title: 'JSX Basics Assignment',
+            description: 'Create a React component using JSX syntax.',
+            dueDate: '2025-06-23T23:59:00',
+            downloadLink: 'https://example.com/jsx-basics.pdf',
+            submitStatus: 'Not Submitted',
+            status: 'Pending',
+          },
+          {
+            id: 'a10',
+            title: 'Props and State',
+            description: 'Build a component that accepts props and manages state.',
+            dueDate: '2025-06-24T23:59:00',
+            downloadLink: 'https://example.com/props-state.pdf',
+            submitStatus: 'Not Submitted',
+            status: 'Pending',
+          },
+          {
+            id: 'a11',
+            title: 'Event Handling in React',
+            description: 'Handle user input with React event handlers.',
+            dueDate: '2025-06-25T23:59:00',
+            downloadLink: 'https://example.com/react-events.pdf',
+            submitStatus: 'Submitted',
+            status: 'Completed',
+          },
+          {
+            id: 'a12',
+            title: 'Conditional Rendering Task',
+            description: 'Use conditional rendering to show/hide content.',
+            dueDate: '2025-06-26T23:59:00',
+            downloadLink: 'https://example.com/conditional-rendering.pdf',
+            submitStatus: 'Not Submitted',
+            status: 'Pending',
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export default assignmentData;
