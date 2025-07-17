@@ -31,3 +31,92 @@ model OTP {
   code      String
   expiresAt DateTime
 }
+model Course {
+  id              Int       @id @default(autoincrement())
+  title           String
+  category        Category  @relation(fields: [categoryId], references: [id])
+  categoryId   Int @default(1)
+   instructor      String
+  lessons         Int?
+  duration        String       // Assuming duration is in minutes
+  price           Float
+  discountedPrice Float?
+  isFree          Boolean   @default(false)
+  thumbnail       String?
+  rating          Float     @default(0)
+  topics          Topic[]
+  createdAt       DateTime  @default(now())
+}
+model Category {
+  id      Int      @id @default(autoincrement())
+  name    String
+  courses Course[]
+}
+model Topic {
+  id          Int        @id @default(autoincrement())
+  title       String
+  course      Course     @relation(fields: [courseId], references: [id])
+  courseId    Int
+  subtopics   Subtopic[]
+}
+model Subtopic {
+  id          Int        @id @default(autoincrement())
+  title       String
+  topic       Topic      @relation(fields: [topicId], references: [id])
+  topicId     Int
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id          Int        @id @default(autoincrement())
+  title       String
+  videoUrl    String?    // optional
+  pdfUrl      String?    // optional
+  textContent String?    // optional
+  subtopic    Subtopic   @relation(fields: [subtopicId], references: [id])
+  subtopicId  Int
+  assignments Assignment[]
+  quizzes    Quiz[]
+  returnTests ReturnTest[]
+  projects    Project[]
+}
+
+model Assignment {
+  id        Int     @id @default(autoincrement())
+  title     String
+  lesson    Lesson  @relation(fields: [lessonId], references: [id])
+  lessonId  Int
+  // Add fields for assignment details
+}
+
+model Quiz {
+  id        Int     @id @default(autoincrement())
+  title     String
+  lesson    Lesson  @relation(fields: [lessonId], references: [id])
+  lessonId  Int
+  // Add quiz questions, etc.
+}
+
+model ReturnTest {
+  id        Int     @id @default(autoincrement())
+  title     String
+  lesson    Lesson  @relation(fields: [lessonId], references: [id])
+  lessonId  Int
+}
+
+model Project {
+  id        Int     @id @default(autoincrement())
+  title     String
+  lesson    Lesson  @relation(fields: [lessonId], references: [id])
+  lessonId  Int
+}
+
+
+model Exam {
+  id         Int      @id @default(autoincrement())
+  title      String   // e.g., "CBSE Class VI"
+  logoUrl    String   // image/logo URL
+  board      String   // e.g., "CBSE", "ICSE", "Punjab Board", or "Capgemini"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
