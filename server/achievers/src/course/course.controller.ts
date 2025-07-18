@@ -1,9 +1,18 @@
-// src/course/course.controller.ts
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+// course.controller.ts
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  NotFoundException,
+} from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiResponse, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('Courses')
 @Controller('courses')
@@ -11,32 +20,37 @@ export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new course' })
-  create(@Body() createCourseDto: CreateCourseDto) {
-    return this.courseService.create(createCourseDto);
+  @ApiBody({ type: CreateCourseDto })
+  @ApiResponse({ status: 201, description: 'Course created successfully' })
+  create(@Body() dto: CreateCourseDto) {
+    return this.courseService.create(dto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all courses' })
+  @ApiResponse({ status: 200, description: 'Get all courses' })
   findAll() {
     return this.courseService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get course by ID' })
+  @ApiParam({ name: 'id', description: 'Course ID' })
+  @ApiResponse({ status: 200, description: 'Get course by ID' })
   findOne(@Param('id') id: string) {
-    return this.courseService.findOne(+id);
+    return this.courseService.findOne(id);
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update a course' })
-  update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-    return this.courseService.update(+id, updateCourseDto);
+  @ApiParam({ name: 'id', description: 'Course ID' })
+  @ApiBody({ type: UpdateCourseDto })
+  @ApiResponse({ status: 200, description: 'Course updated successfully' })
+  update(@Param('id') id: string, @Body() dto: UpdateCourseDto) {
+    return this.courseService.update(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a course' })
+  @ApiParam({ name: 'id', description: 'Course ID' })
+  @ApiResponse({ status: 200, description: 'Course deleted successfully' })
   remove(@Param('id') id: string) {
-    return this.courseService.remove(+id);
+    return this.courseService.remove(id);
   }
 }

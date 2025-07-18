@@ -1,49 +1,45 @@
-import { IsBoolean, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCourseDto {
   @ApiProperty()
-  @IsString()
+  category: string;
+
+  @ApiProperty()
   title: string;
 
-  @ApiProperty()
-  @IsInt()
-  categoryId: number;
+//   @ApiProperty()
+//   lessons: number;
 
   @ApiProperty()
-  @IsString()
-  instructor: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsInt()
-  lessons?: number;
-
-  @ApiProperty()
-  @IsInt()
   duration: string;
 
   @ApiProperty()
-  @IsNumber()
   price: number;
 
   @ApiProperty()
-  @IsOptional()
-  @IsNumber()
-  discountedPrice?: number;
+  oldPrice: number;
 
   @ApiProperty()
-  @IsOptional()
-  @IsBoolean()
-  isFree?: boolean;
+  free: boolean;
 
   @ApiProperty()
-  @IsOptional()
-  @IsString()
-  thumbnail?: string;
+  author: string;
 
   @ApiProperty()
-  @IsOptional()
-  @IsNumber()
-  rating?: number;
+  rating: number;
+
+  @ApiProperty()
+  video: string;
+
+  @ApiProperty()
+  image: string;
+
+  @ApiProperty()
+  lastUpdated: Date;
+
+  @ApiProperty()
+  description: string;
+
+  @ApiProperty()
+  instructorId: string;
 }

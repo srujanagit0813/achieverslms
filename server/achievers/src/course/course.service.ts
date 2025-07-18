@@ -1,5 +1,4 @@
-// src/course/course.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -8,33 +7,51 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 export class CourseService {
   constructor(private prisma: PrismaService) {}
 
-  create(data: CreateCourseDto) {
-    return this.prisma.course.create({ data });
+  async create(dto: CreateCourseDto) {
+    return this.prisma.course.create({ data: dto });
   }
 
-  findAll() {
+  async findAll() {
     return this.prisma.course.findMany({
-      include: { category: true, topics: true },
+      include: {
+        instructor: true,
+        curriculum: {
+          include: {
+            items: true,
+          },
+        },
+        reviews: true,
+      },
     });
   }
 
-  findOne(id: number) {
-    return this.prisma.course.findUnique({
+  async findOne(id: string) {
+    const course = await this.prisma.course.findUnique({
       where: { id },
-      include: { category: true, topics: true },
+      include: {
+        instructor: true,
+        curriculum: {
+          include: {
+            items: true,
+          },
+        },
+        reviews: true,
+      },
     });
+    if (!course) throw new NotFoundException('Course not found');
+    return course;
   }
 
-  update(id: number, data: UpdateCourseDto) {
+  async update(id: string, dto: UpdateCourseDto) {
+    await this.findOne(id); // throws if not found
     return this.prisma.course.update({
       where: { id },
-      data,
+      data: dto,
     });
   }
 
-  remove(id: number) {
-    return this.prisma.course.delete({
-      where: { id },
-    });
+  async remove(id: string) {
+    await this.findOne(id); // throws if not found
+    return this.prisma.course.delete({ where: { id } });
   }
 }

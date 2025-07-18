@@ -6,24 +6,24 @@
 
 generator client {
   provider = "prisma-client-js"
- 
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id             Int      @id @default(autoincrement())
-  fullName       String   @db.VarChar(40) // App should validate min 3 characters
-  email          String   @unique @db.VarChar(60)
-  studentPhone   String?   @db.Char(10) // App should ensure 10-digit number
-  parentPhone    String?   @db.Char(10)
-  password       String   @db.VarChar(255) // Hashed password
-   userImage      String?  // URL or file path of the user's profile picture
-    role           String   @default("student") // can be 'student', 'instructor', or 'admin'
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  fullName     String   @db.VarChar(40) // App should validate min 3 characters
+  email        String   @unique @db.VarChar(60)
+  studentPhone String?  @db.Char(10) // App should ensure 10-digit number
+  parentPhone  String?  @db.Char(10)
+  password     String   @db.VarChar(255) // Hashed password
+  userImage    String? // URL or file path of the user's profile picture
+  role         String   @default("student") // can be 'student', 'instructor', or 'admin'
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model OTP {
@@ -31,92 +31,97 @@ model OTP {
   code      String
   expiresAt DateTime
 }
-model Course {
-  id              Int       @id @default(autoincrement())
-  title           String
-  category        Category  @relation(fields: [categoryId], references: [id])
-  categoryId   Int @default(1)
-   instructor      String
-  lessons         Int?
-  duration        String       // Assuming duration is in minutes
-  price           Float
-  discountedPrice Float?
-  isFree          Boolean   @default(false)
-  thumbnail       String?
-  rating          Float     @default(0)
-  topics          Topic[]
-  createdAt       DateTime  @default(now())
+
+model AnimatedVideo {
+  id         Int      @id @default(autoincrement())
+  title      String
+  subtitle   String
+  buttonText String
+  image      String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
-model Category {
-  id      Int      @id @default(autoincrement())
+
+model Course {
+  id           String     @id @default(cuid())
+  category     String
+  title        String
+  lessons      Lesson[]
+  duration     String
+  price        Float
+  oldPrice     Float
+  free         Boolean
+  author       String
+  rating       Float
+  video        String
+  image        String
+  lastUpdated  DateTime
+  description  String     @db.Text // <-- Update this line
+  instructor   Instructor @relation(fields: [instructorId], references: [id])
+  instructorId String
+
+  curriculum Curriculum[]
+  reviews    Review[]
+}
+
+model Instructor {
+  id      String   @id @default(cuid())
   name    String
+  bio     String
   courses Course[]
 }
-model Topic {
-  id          Int        @id @default(autoincrement())
-  title       String
-  course      Course     @relation(fields: [courseId], references: [id])
-  courseId    Int
-  subtopics   Subtopic[]
+
+model Curriculum {
+  id       String           @id @default(cuid())
+  section  String
+  duration String
+  course   Course           @relation(fields: [courseId], references: [id])
+  courseId String
+  items    CurriculumItem[]
 }
-model Subtopic {
-  id          Int        @id @default(autoincrement())
-  title       String
-  topic       Topic      @relation(fields: [topicId], references: [id])
-  topicId     Int
-  lessons     Lesson[]
+
+model CurriculumItem {
+  id           String     @id @default(cuid())
+  type         String
+  title        String
+  duration     String?
+  preview      Boolean?
+  locked       Boolean?
+  questions    Int?
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
+  curriculumId String
+}
+
+model Review {
+  id       String @id @default(cuid())
+  user     String
+  comment  String
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String
 }
 
 model Lesson {
-  id          Int        @id @default(autoincrement())
-  title       String
-  videoUrl    String?    // optional
-  pdfUrl      String?    // optional
-  textContent String?    // optional
-  subtopic    Subtopic   @relation(fields: [subtopicId], references: [id])
-  subtopicId  Int
-  assignments Assignment[]
-  quizzes    Quiz[]
-  returnTests ReturnTest[]
-  projects    Project[]
+  id       String          @id @default(cuid())
+  title    String
+  courseId String
+  course   Course          @relation(fields: [courseId], references: [id])
+  contents LessonContent[]
 }
 
-model Assignment {
-  id        Int     @id @default(autoincrement())
-  title     String
-  lesson    Lesson  @relation(fields: [lessonId], references: [id])
-  lessonId  Int
-  // Add fields for assignment details
+model LessonContent {
+  id       String      @id @default(cuid())
+  label    String
+  type     ContentType
+  duration String? // only for videos
+  url      String? // only for videos
+  title    String? // only for assignment
+  lessonId String
+  lesson   Lesson      @relation(fields: [lessonId], references: [id])
 }
 
-model Quiz {
-  id        Int     @id @default(autoincrement())
-  title     String
-  lesson    Lesson  @relation(fields: [lessonId], references: [id])
-  lessonId  Int
-  // Add quiz questions, etc.
-}
-
-model ReturnTest {
-  id        Int     @id @default(autoincrement())
-  title     String
-  lesson    Lesson  @relation(fields: [lessonId], references: [id])
-  lessonId  Int
-}
-
-model Project {
-  id        Int     @id @default(autoincrement())
-  title     String
-  lesson    Lesson  @relation(fields: [lessonId], references: [id])
-  lessonId  Int
-}
-
-
-model Exam {
-  id         Int      @id @default(autoincrement())
-  title      String   // e.g., "CBSE Class VI"
-  logoUrl    String   // image/logo URL
-  board      String   // e.g., "CBSE", "ICSE", "Punjab Board", or "Capgemini"
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+enum ContentType {
+  video
+  material
+  quiz
+  assignment
 }
