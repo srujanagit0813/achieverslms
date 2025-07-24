@@ -17,11 +17,11 @@ async function bootstrap() {
     .setTitle('achieverslms API')
     .setDescription('API documentation for My App')
     .setVersion('1.0')
-    .addTag('users') // Optional tags
+    
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); // http://localhost:3000/api
+  SwaggerModule.setup('api', app, document); 
 
   await app.listen(5000);
 }

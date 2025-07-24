@@ -9,16 +9,28 @@ import { CourseModule } from './course/course.module';
 import { InstructorModule } from './instructor/instructor.module';
 import { LessonModule } from './lesson/lesson.module';
 import { LessonContentModule } from './lesson-content/lesson-content.module';
+import { CurriculumModule } from './curriculum/curriculum.module';
+import { CurriculumItemModule } from './curriculum-item/curriculum-item.module';
+import { ReviewModule } from './review/review.module';
+import { AssignmentModule } from './assignment/assignment.module';
+import { QuizModule } from './quiz/quiz.module';
+import { QuizQuestionModule } from './quiz-question/quiz-question.module';
 
 @Module({
   imports: [PrismaModule,
     UserModule,
+    AnimatedVideoModule,
    CourseModule,
    InstructorModule,
    LessonModule,
-    AnimatedVideoModule,
-    LessonContentModule,
     
+    LessonContentModule,
+    CurriculumModule,
+  CurriculumItemModule,
+  ReviewModule,
+  AssignmentModule,
+  QuizModule,
+  QuizQuestionModule
 
   ],
   controllers: [AppController],

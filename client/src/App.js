@@ -62,9 +62,9 @@ function App() {
   
   return (
     <div className="App">
-    
+  
          {!hideNavbar && <Navbar />}
-     
+   
         <Routes>
            <Route path="/" element={<HomePage />} />
         {/* <Route path="/" element={<Landingpage />} /> */}

@@ -55,7 +55,7 @@ model Course {
   rating       Float
   video        String
   image        String
-  lastUpdated  DateTime
+  lastUpdated  DateTime   @default(now())
   description  String     @db.Text // <-- Update this line
   instructor   Instructor @relation(fields: [instructorId], references: [id])
   instructorId String
@@ -109,14 +109,16 @@ model Lesson {
 }
 
 model LessonContent {
-  id       String      @id @default(cuid())
-  label    String
-  type     ContentType
-  duration String? // only for videos
-  url      String? // only for videos
-  title    String? // only for assignment
-  lessonId String
-  lesson   Lesson      @relation(fields: [lessonId], references: [id])
+  id          String       @id @default(cuid())
+  label       String
+  type        ContentType
+  duration    String? // only for videos
+  url         String? // only for videos
+  title       String? // only for assignment
+  lessonId    String
+  lesson      Lesson       @relation(fields: [lessonId], references: [id])
+  assignments Assignment[]
+  quizzes            Quiz[]
 }
 
 enum ContentType {
@@ -124,4 +126,35 @@ enum ContentType {
   material
   quiz
   assignment
+}
+
+model Assignment {
+  id              String        @id @default(cuid())
+  title           String
+  description     String
+  dueDate         DateTime
+  downloadLink    String
+  submitStatus    String // e.g., "Submitted", "Not Submitted"
+  status          String // e.g., "Pending", "Completed"
+  lessonContent   LessonContent @relation(fields: [lessonContentId], references: [id])
+  lessonContentId String
+}
+model Quiz {
+  id        String        @id @default(cuid())
+  label     String
+  questions Int
+  duration  Int
+  marks     Int
+  lessonContent   LessonContent @relation(fields: [lessonContentId], references: [id])
+  lessonContentId String
+  quizQuestions QuizQuestion[]
+}
+
+model QuizQuestion {
+  id       String   @id @default(cuid())
+  question String
+  options  Json     // JSON array like ["A", "B", "C", "D"]
+  answer   String
+  quizId   String
+  quiz     Quiz     @relation(fields: [quizId], references: [id])
 }
