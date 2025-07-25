@@ -119,6 +119,7 @@ model LessonContent {
   lesson      Lesson       @relation(fields: [lessonId], references: [id])
   assignments Assignment[]
   quizzes            Quiz[]
+  materials Material[]
 }
 
 enum ContentType {
@@ -157,4 +158,25 @@ model QuizQuestion {
   answer   String
   quizId   String
   quiz     Quiz     @relation(fields: [quizId], references: [id])
+}
+
+
+model Material {
+  id          String   @id @default(cuid())
+  label       String
+  type        MaterialType
+  pages       Int?
+  size        String?
+  link        String
+  download    String
+  description String?
+  author      String?
+  lessonContent   LessonContent @relation(fields: [lessonContentId], references: [id])
+  lessonContentId String
+}
+
+enum MaterialType {
+  PDF
+  Video
+  Image
 }

@@ -15,6 +15,7 @@ import { ReviewModule } from './review/review.module';
 import { AssignmentModule } from './assignment/assignment.module';
 import { QuizModule } from './quiz/quiz.module';
 import { QuizQuestionModule } from './quiz-question/quiz-question.module';
+import { MaterialModule } from './material/material.module';
 
 @Module({
   imports: [PrismaModule,
@@ -30,7 +31,8 @@ import { QuizQuestionModule } from './quiz-question/quiz-question.module';
   ReviewModule,
   AssignmentModule,
   QuizModule,
-  QuizQuestionModule
+  QuizQuestionModule,
+  MaterialModule
 
   ],
   controllers: [AppController],
