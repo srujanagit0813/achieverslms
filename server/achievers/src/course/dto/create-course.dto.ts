@@ -14,16 +14,15 @@ export class CreateCourseDto {
   duration: string;
 
   @ApiProperty()
-  price: number;
+  actualPrice: number;
 
   @ApiProperty()
-  oldPrice: number;
+  discountedPrice: number;
 
   @ApiProperty()
   free: boolean;
 
-  @ApiProperty()
-  author: string;
+ 
 
   @ApiProperty()
   rating: number;

@@ -42,27 +42,35 @@ model AnimatedVideo {
   updatedAt  DateTime @updatedAt
 }
 
-model Course {
-  id           String     @id @default(cuid())
-  category     String
-  title        String
-  lessons      Lesson[]
-  duration     String
-  price        Float
-  oldPrice     Float
-  free         Boolean
-  author       String
-  rating       Float
-  video        String
-  image        String
-  lastUpdated  DateTime   @default(now())
-  description  String     @db.Text // <-- Update this line
-  instructor   Instructor @relation(fields: [instructorId], references: [id])
-  instructorId String
-
-  curriculum Curriculum[]
-  reviews    Review[]
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
+model Course {
+  id             String      @id @default(cuid())
+  category       String
+  title          String
+  lessons        Lesson[]
+  duration       String
+ actualPrice     Float   @default(0)
+discountedPrice Float   @default(0)
+ 
+  free           Boolean
+  rating         Float
+  video          String
+  image          String
+  lastUpdated    DateTime    @default(now())
+  description    String      @db.Text
+  instructor     Instructor  @relation(fields: [instructorId], references: [id])
+  instructorId   String
+
+  curriculum     Curriculum[]
+  reviews        Review[]
+}
+
 
 model Instructor {
   id      String   @id @default(cuid())

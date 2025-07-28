@@ -16,11 +16,13 @@ import { AssignmentModule } from './assignment/assignment.module';
 import { QuizModule } from './quiz/quiz.module';
 import { QuizQuestionModule } from './quiz-question/quiz-question.module';
 import { MaterialModule } from './material/material.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [PrismaModule,
     UserModule,
     AnimatedVideoModule,
+    CategoryModule,
    CourseModule,
    InstructorModule,
    LessonModule,
