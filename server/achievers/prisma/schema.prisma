@@ -45,19 +45,21 @@ model AnimatedVideo {
 model Category {
   id        String   @id @default(cuid())
   name      String
+  courses Course[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Course {
   id             String      @id @default(cuid())
-  category       String
+  category     Category?  @relation(fields: [categoryId], references: [id])
+  categoryId   String?
+
   title          String
   lessons        Lesson[]
   duration       String
  actualPrice     Float   @default(0)
-discountedPrice Float   @default(0)
- 
+  discountedPrice Float   @default(0)
   free           Boolean
   rating         Float
   video          String
@@ -83,7 +85,7 @@ model Curriculum {
   id       String           @id @default(cuid())
   section  String
   duration String
-  course   Course           @relation(fields: [courseId], references: [id])
+  course   Course           @relation(fields: [courseId], references: [id],onDelete: Cascade)
   courseId String
   items    CurriculumItem[]
 }
@@ -96,7 +98,7 @@ model CurriculumItem {
   preview      Boolean?
   locked       Boolean?
   questions    Int?
-  curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [id],onDelete: Cascade)
   curriculumId String
 }
 
@@ -104,7 +106,7 @@ model Review {
   id       String @id @default(cuid())
   user     String
   comment  String
-  course   Course @relation(fields: [courseId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id],onDelete: Cascade)
   courseId String
 }
 
@@ -112,7 +114,7 @@ model Lesson {
   id       String          @id @default(cuid())
   title    String
   courseId String
-  course   Course          @relation(fields: [courseId], references: [id])
+  course   Course          @relation(fields: [courseId], references: [id],onDelete: Cascade)
   contents LessonContent[]
 }
 
@@ -124,7 +126,7 @@ model LessonContent {
   url         String? // only for videos
   title       String? // only for assignment
   lessonId    String
-  lesson      Lesson       @relation(fields: [lessonId], references: [id])
+  lesson      Lesson       @relation(fields: [lessonId], references: [id],onDelete: Cascade)
   assignments Assignment[]
   quizzes            Quiz[]
   materials Material[]
@@ -145,7 +147,7 @@ model Assignment {
   downloadLink    String
   submitStatus    String // e.g., "Submitted", "Not Submitted"
   status          String // e.g., "Pending", "Completed"
-  lessonContent   LessonContent @relation(fields: [lessonContentId], references: [id])
+  lessonContent   LessonContent @relation(fields: [lessonContentId], references: [id],onDelete: Cascade)
   lessonContentId String
 }
 model Quiz {
@@ -154,7 +156,7 @@ model Quiz {
   questions Int
   duration  Int
   marks     Int
-  lessonContent   LessonContent @relation(fields: [lessonContentId], references: [id])
+  lessonContent   LessonContent @relation(fields: [lessonContentId], references: [id],onDelete: Cascade)
   lessonContentId String
   quizQuestions QuizQuestion[]
 }
@@ -165,7 +167,7 @@ model QuizQuestion {
   options  Json     // JSON array like ["A", "B", "C", "D"]
   answer   String
   quizId   String
-  quiz     Quiz     @relation(fields: [quizId], references: [id])
+  quiz     Quiz     @relation(fields: [quizId], references: [id],onDelete: Cascade)
 }
 
 
@@ -179,7 +181,7 @@ model Material {
   download    String
   description String?
   author      String?
-  lessonContent   LessonContent @relation(fields: [lessonContentId], references: [id])
+  lessonContent   LessonContent @relation(fields: [lessonContentId], references: [id],onDelete: Cascade)
   lessonContentId String
 }
 
