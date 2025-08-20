@@ -12,12 +12,20 @@ export class QuizQuestionService {
   }
 
   findAll() {
-    return this.prisma.quizQuestion.findMany();
+    return this.prisma.quizQuestion.findMany({  include: {
+      quiz: true, // <-- This loads the related quiz (which includes the title)
+    },
+});
   }
 
-  findOne(id: string) {
-    return this.prisma.quizQuestion.findUnique({ where: { id } });
-  }
+findByQuizId(quizId: string) {
+  return this.prisma.quizQuestion.findMany({
+    where: { quizId },
+    include: {
+      quiz: true, // loads the related quiz
+    },
+  });
+}
 
   update(id: string, dto: UpdateQuizQuestionDto) {
     return this.prisma.quizQuestion.update({ where: { id }, data: dto });

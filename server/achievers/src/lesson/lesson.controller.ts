@@ -24,10 +24,12 @@ export class LessonController {
     return this.service.getAllLessons();
   }
 
-  @Get(':id')
-  getLesson(@Param('id') id: string) {
-    return this.service.getLessonById(id);
-  }
+  @Get('/course/:courseId')
+getLessonsByCourse(@Param('courseId') courseId: string) {
+  return this.service.getLessonsByCourseId(courseId);
+}
+
+  
 
   @Put(':id')
   updateLesson(@Param('id') id: string, @Body() dto: UpdateLessonDto) {

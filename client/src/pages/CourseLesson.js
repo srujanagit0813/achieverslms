@@ -9,29 +9,49 @@ import {
   ExpandMore, OndemandVideo, Description, Quiz, Assignment
 } from '@mui/icons-material';
 import ReactPlayer from 'react-player';
-import { courses } from '../components/PerfectCourseSection';
+
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import coursedata from '../data/coursedata';
+import axios from 'axios'; // ✅ Axios import
 
 const CourseLesson = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const course = courses.find((item) => item.id === id);
+  
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const [selectedVideo, setSelectedVideo] = useState(course?.video || '');
-  const [expandedLessonId, setExpandedLessonId] = useState(
-    coursedata.length > 0 ? coursedata[0].id : null
-  );
+ const [selectedVideo, setSelectedVideo] = useState('');
+
+  const [expandedLessonId, setExpandedLessonId] = useState(null);
+  const [courseData, setCourseData] = useState([]); // ✅ useState for fetched data
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: true });
   }, []);
 
-  if (!course) return <Typography sx={{ mt: 10 }}>Course not found</Typography>;
+  useEffect(() => {
+    const fetchLessons = async () => {
+      try {
+       const response = await axios.get(`http://localhost:5000/lessons/course/${id}`)
+
+
+        setCourseData(response.data);
+        if (response.data.length > 0) {
+          setExpandedLessonId(response.data[0].id);
+        }
+      } catch (error) {
+        console.error('Failed to fetch lessons:', error);
+      }
+    };
+    fetchLessons();
+  }, [id]);
+
+  if (!courseData || courseData.length === 0) {
+  return <Typography sx={{ mt: 10 }}>Course not found</Typography>;
+}
+
 
   const handlePreview = (url) => {
     setSelectedVideo(url);
@@ -53,7 +73,8 @@ const CourseLesson = () => {
   return (
     <Box sx={{ mt: 15, p: { xs: 2, md: 4 }, background: '#f9f9f9', minHeight: '100vh' }} data-aos="fade-up">
       <Typography variant="h4" fontWeight={600} sx={{ mb: 4, textAlign: 'center' }}>
-        🎬 {course.title} - Lessons
+      🎬 {courseData[0]?.course?.title || 'Course'} - Lessons
+
       </Typography>
 
       <Grid container spacing={10} ml={isMobile ? 0 : 15} data-aos="fade-up">
@@ -64,7 +85,7 @@ const CourseLesson = () => {
               📚 Course Lessons
             </Typography>
 
-            {coursedata.map((lesson) => (
+            {courseData.map((lesson) => (
               <Accordion
                 key={lesson.id}
                 expanded={expandedLessonId === lesson.id}

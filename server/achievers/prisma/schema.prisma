@@ -42,6 +42,16 @@ model AnimatedVideo {
   updatedAt  DateTime @updatedAt
 }
 
+model Subject {
+  id          String   @id @default(cuid())
+  title       String   @db.VarChar(100)
+  description String   @db.VarChar(255)
+  icon        String   @db.VarChar(10)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
 model Category {
   id        String   @id @default(cuid())
   name      String
@@ -62,8 +72,8 @@ model Course {
   discountedPrice Float   @default(0)
   free           Boolean
   rating         Float
-  video          String
-  image          String
+  imageUrl  String?   // <--- add this
+  videoUrl  String? 
   lastUpdated    DateTime    @default(now())
   description    String      @db.Text
   instructor     Instructor  @relation(fields: [instructorId], references: [id])
@@ -172,15 +182,15 @@ model QuizQuestion {
 
 
 model Material {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   label       String
-  type        MaterialType
+  type        String?
   pages       Int?
+  link        String?
+  download    String?
   size        String?
-  link        String
-  download    String
   description String?
-  author      String?
+ 
   lessonContent   LessonContent @relation(fields: [lessonContentId], references: [id],onDelete: Cascade)
   lessonContentId String
 }
@@ -189,4 +199,11 @@ enum MaterialType {
   PDF
   Video
   Image
+}
+
+  
+ model TrendingExam {
+  id    String       @id @default(cuid())
+  title  String @db.VarChar(255)
+  image  String @db.VarChar(500)
 }

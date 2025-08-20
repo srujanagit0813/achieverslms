@@ -12,7 +12,7 @@ export class QuizService {
   }
 
   findAll() {
-    return this.prisma.quiz.findMany({ include: { quizQuestions: true } });
+    return this.prisma.quiz.findMany({ include: { quizQuestions: true ,lessonContent:true} }); //include lessonContent
   }
 
   findOne(id: string) {

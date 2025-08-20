@@ -71,7 +71,7 @@ function QuizQuestions() {
 
   if (!quizLabel || !Array.isArray(questions) || !questions.length) {
     return (
-      <Typography color="error" variant="h6" align="center" sx={{ mt: 4 }}>
+      <Typography color="error" variant="h6" align="center" sx={{ mt: 14 }}>
         Invalid or Missing Quiz Questions
       </Typography>
     );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -13,27 +13,30 @@ import { useLocation, useNavigate } from "react-router-dom";
 import QuizIcon from "@mui/icons-material/Quiz";
 import EventIcon from "@mui/icons-material/Event";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import sampleQuizQuestions from "../data/quizQuestionsData";
-import quizQuestionsData from "../data/quizQuestionsData";
+import axios from "axios";
 
 function StartQuizPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const {
-    quizLabel,
-    date,
-    duration,
-    questions,
-    marks,
-  } = location.state || {};
+  const { quizLabel, date, duration, marks, quizId } = location.state || {};
+  const [questions, setQuestions] = useState([]);
 
-   if (!quizLabel || !Array.isArray(questions) || questions.length === 0) {
-    return (
-      <Typography color="error" variant="h6" align="center" sx={{ mt: 10 }}>
-        Invalid or missing quiz questions.
-      </Typography>
-    );
+  useEffect(() => {
+    if (quizId) {
+      axios.get(`http://localhost:5000/quiz-questions?quizId=${quizId}`)
+        .then((res) => {
+          
+          const data = res.data.questions || res.data;
+          console.log("Fetched Questions:", data);
+          setQuestions(data);
+        })
+        .catch((err) => console.error(err));
+    }
+  }, [quizId]);
+
+  if (!quizLabel) {
+    return <Typography color="error">Invalid or missing quiz</Typography>;
   }
 
   return (
@@ -45,7 +48,6 @@ function StartQuizPage() {
         alignItems: "center",
         background: "linear-gradient(to right, #e0f7fa, #f1f8e9)",
         p: 2,
-      
       }}
     >
       <Slide direction="up" in={true} mountOnEnter unmountOnExit>
@@ -111,8 +113,9 @@ function StartQuizPage() {
               onClick={() =>
                 navigate("/quiz-questions", {
                   state: {
+                    quizId,
                     quizLabel,
-                    questions,
+                    questions, 
                     duration,
                     marks,
                     date,
@@ -122,7 +125,6 @@ function StartQuizPage() {
             >
               Start Quiz Now
             </Button>
-            
           </Stack>
         </Paper>
       </Slide>

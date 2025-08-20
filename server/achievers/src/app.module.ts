@@ -17,11 +17,18 @@ import { QuizModule } from './quiz/quiz.module';
 import { QuizQuestionModule } from './quiz-question/quiz-question.module';
 import { MaterialModule } from './material/material.module';
 import { CategoryModule } from './category/category.module';
+import { AdminModule } from './admin/admin.module';
+import { TrendingExamModule } from './trending-exam/trending-exam.module';
+import { SubjectModule } from './subject/subject.module';
 
 @Module({
   imports: [PrismaModule,
     UserModule,
+    AdminModule,
+    
     AnimatedVideoModule,
+    SubjectModule,
+    TrendingExamModule,
     CategoryModule,
    CourseModule,
    InstructorModule,

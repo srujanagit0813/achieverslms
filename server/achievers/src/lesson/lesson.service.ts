@@ -15,15 +15,16 @@ export class LessonService {
   }
 
   getAllLessons() {
-    return this.prisma.lesson.findMany({ include: { contents: true } });
+    return this.prisma.lesson.findMany({ include: { contents: true ,course:true} });
   }
 
-  getLessonById(id: string) {
-    return this.prisma.lesson.findUnique({
-      where: { id },
-      include: { contents: true },
-    });
-  }
+  getLessonsByCourseId(courseId: string) {
+  return this.prisma.lesson.findMany({
+    where: { courseId },
+    include: { contents: true, course: true },
+  });
+}
+
 
   updateLesson(id: string, dto: UpdateLessonDto) {
     return this.prisma.lesson.update({ where: { id }, data: dto });

@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty  } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
 
 export class CreateCourseDto {
   @ApiProperty()
@@ -19,19 +20,28 @@ export class CreateCourseDto {
   @ApiProperty()
   discountedPrice: number;
 
-  @ApiProperty()
-  free: boolean;
+  // @ApiProperty()
+  // free: boolean;
 
- 
+ @ApiProperty()
+@IsOptional()
+free: string | boolean;
+
 
   @ApiProperty()
   rating: number;
 
-  @ApiProperty()
-  video: string;
 
-  @ApiProperty()
-  image: string;
+     @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  videoUrl?: string;
+ 
 
   @ApiProperty()
   lastUpdated: Date;

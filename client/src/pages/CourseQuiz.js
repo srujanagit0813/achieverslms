@@ -17,30 +17,80 @@ import {
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import Aos from "aos";
 import "aos/dist/aos.css";
-import quizData from "../data/quizData";
-import quizQuestionsData from "../data/quizQuestionsData";
+import axios from "axios";
 
 const CourseQuiz = () => {
   const { id } = useParams();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   const isResponsive = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
 
-  const course = quizData[id];
-  const [selectedLessonId, setSelectedLessonId] = useState(
-    course?.lessons?.[0]?.id || ""
-  );
+    const [course, setCourse] = useState(null);
+  const [selectedLessonId, setSelectedLessonId] = useState("");
+  const [lessons, setLessons] = useState([]);
+
+useEffect(() => {
+  const fetchLessons = async () => {
+    const lessonsRes = await axios.get(`http://localhost:5000/lessons?courseId=${id}`);
+    setLessons(lessonsRes.data);
+  };
+  fetchLessons();
+}, [id]);
 
   useEffect(() => {
-    Aos.init({ duration: 1000, once: true });
-  }, []);
+  Aos.init({ duration: 1000, once: true });
 
+  const fetchQuiz = async () => {
+    try {
+      
+      const res = await axios.get(`http://localhost:5000/quiz?courseId=${id}`);
+      const quiz = res.data; 
+
+    
+     
+     
+      const lessonTitleMap = {};
+      lessons.forEach(lesson => {
+        lessonTitleMap[lesson.id] = lesson.title;
+      });
+
+      
+      const lessonsMap = {};
+      quiz.forEach((mat) => {
+        if (!lessonsMap[mat.lessonContentId]) {
+          lessonsMap[mat.lessonContentId] = {
+            id: mat.lessonContentId,
+            title: lessonTitleMap[mat.lessonContentId] || `Lesson - ${mat.lessonContentId}`,
+            quizzes: []
+          };
+        }
+        lessonsMap[mat.lessonContentId].quizzes.push(mat);
+      });
+
+      
+      const courseData = {
+        id,
+        title: "Course ",
+        lessons: Object.values(lessonsMap),
+      };
+
+      setCourse(courseData);
+
+      if (courseData.lessons.length > 0) {
+        setSelectedLessonId(courseData.lessons[0].id);
+      }
+    } catch (error) {
+      console.error("Error fetching quiz or lessons:", error);
+    }
+  };
+
+  fetchQuiz();
+}, [id]);
   if (!course) {
     return (
       <Box sx={{ mt: 10, textAlign: "center" }}>
-        <Typography variant="h5">No quiz available for this course.</Typography>
+        <Typography variant="h5">Loading quizzes...</Typography>
       </Box>
     );
   }
@@ -60,8 +110,6 @@ const CourseQuiz = () => {
           gutterBottom
           sx={{
             fontSize: isMobile ? "1.5rem" : "2rem",
-
-            textAlign: isMobile ? "center" : "center",
           }}
         >
           {course.title} – Quizzes
@@ -82,7 +130,6 @@ const CourseQuiz = () => {
         sx={{
           display: "flex",
           flexDirection: isResponsive ? "column" : "row",
-          
         }}
       >
         {/* Left Panel */}
@@ -90,8 +137,7 @@ const CourseQuiz = () => {
           sx={{
             width: isResponsive ? "90%" : "20%",
             bgcolor: "linear-gradient(to bottom, #f9f9ff, #eef3f8)",
-             p:isMobile? 2: 3,
-
+            p: isMobile ? 2 : 3,
             borderRadius: 4,
             border: "1px solid #dce3f0",
             boxShadow: "0 6px 18px rgba(0,0,0,0.05)",
@@ -129,8 +175,6 @@ const CourseQuiz = () => {
                       px: 2,
                       py: 1.5,
                       transition: "all 0.3s ease",
-
-                      color: isSelected ? "#black" : "#333",
                       fontWeight: 600,
                     }}
                   >
@@ -162,11 +206,10 @@ const CourseQuiz = () => {
             variant="h5"
             fontWeight="bold"
             mb={3}
-            textAlign="justify"
             sx={{
               fontSize: isMobile ? "1rem" : "1.2rem",
               ml: isMobile ? 0 : 5,
-               mt: isMobile ? 2 : 0,
+              mt: isMobile ? 2 : 0,
               textAlign: isMobile ? "center" : "justify",
             }}
           >
@@ -180,9 +223,7 @@ const CourseQuiz = () => {
                   <Paper
                     elevation={6}
                     sx={{
-                      ml: 0,
                       width: "100%",
-                      
                       p: 3,
                       borderRadius: 4,
                       textAlign: "center",
@@ -194,17 +235,17 @@ const CourseQuiz = () => {
                       },
                     }}
                   >
-                    <Typography
-                      variant="body1"
+                   
+                                        <Typography variant="body1" mb={2} textAlign={"justify"}
+                                        
                       fontWeight={"bold"}
                       color="primary"
-                      mb={1}
-                    >
-                      {quiz.label}
+                      >
+                     {quiz.label} 
                     </Typography>
                     <Divider sx={{ my: 1 }} />
                     <Typography variant="body1" mb={2} textAlign={"justify"}>
-                      📝 Questions: {quiz.questions}
+                      📝 Questions: {quiz.questionsCount}
                     </Typography>
                     <Typography variant="body1" mb={2} textAlign={"justify"}>
                       ⏱ Duration: {quiz.duration} min
@@ -225,11 +266,12 @@ const CourseQuiz = () => {
                             lessonId: selectedLesson.id,
                             lessonTitle: selectedLesson.title,
                             quizId: quiz.id,
+                            
                             quizLabel: quiz.label,
-                            questions: quizQuestionsData[quiz.id],
                             marks: quiz.marks,
                             duration: quiz.duration,
                             date: new Date().toLocaleDateString(),
+                            questions: quiz.questions
                           },
                         })
                       }

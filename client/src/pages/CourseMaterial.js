@@ -13,26 +13,82 @@ import {
   ListItemText,
   useMediaQuery,
   useTheme,
-  Chip,
 } from "@mui/material";
 import { NavLink, useParams } from "react-router-dom";
 import Aos from "aos";
 import "aos/dist/aos.css";
-import materialData from "../data/materialData";
+import axios from "axios";
 
 const CourseMaterial = () => {
   const { id } = useParams();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
- const isResponsive = useMediaQuery(theme.breakpoints.down("md"));
-  const course = materialData[id];
-  const [selectedLessonId, setSelectedLessonId] = useState(
-    course?.lessons?.[0]?.id || ""
-  );
+  const isResponsive = useMediaQuery(theme.breakpoints.down("md"));
+
+  const [course, setCourse] = useState(null);
+  const [selectedLessonId, setSelectedLessonId] = useState("");
+  const [lessons, setLessons] = useState([]);
+
+useEffect(() => {
+  const fetchLessons = async () => {
+    const lessonsRes = await axios.get(`http://localhost:5000/lessons?courseId=${id}`);
+    setLessons(lessonsRes.data);
+  };
+  fetchLessons();
+}, [id]);
 
   useEffect(() => {
-    Aos.init({ duration: 1000, once: true });
-  }, []);
+  Aos.init({ duration: 1000, once: true });
+
+  const fetchMaterials = async () => {
+    try {
+      // 1. Fetch materials for this course
+      const res = await axios.get(`http://localhost:5000/materials?courseId=${id}`);
+      const materials = res.data; // array of materials
+
+    
+     
+      // Create a map of lessonId -> lessonTitle
+      const lessonTitleMap = {};
+      lessons.forEach(lesson => {
+        lessonTitleMap[lesson.id] = lesson.title;
+      });
+
+      // 3. Group materials by lessonContentId and attach lesson title
+      const lessonsMap = {};
+      materials.forEach((mat) => {
+        if (!lessonsMap[mat.lessonContentId]) {
+          lessonsMap[mat.lessonContentId] = {
+            id: mat.lessonContentId,
+            title: lessonTitleMap[mat.lessonContentId] || `Lesson - ${mat.lessonContentId}`,
+            materials: []
+          };
+        }
+        lessonsMap[mat.lessonContentId].materials.push(mat);
+      });
+
+      // 4. Build courseData
+      const courseData = {
+        id,
+        title: "Course Materials",
+        lessons: Object.values(lessonsMap),
+      };
+
+      setCourse(courseData);
+
+      if (courseData.lessons.length > 0) {
+        setSelectedLessonId(courseData.lessons[0].id);
+      }
+    } catch (error) {
+      console.error("Error fetching materials or lessons:", error);
+    }
+  };
+
+  fetchMaterials();
+}, [id]);
+
+
+
 
   if (!course) {
     return (
@@ -59,8 +115,7 @@ const CourseMaterial = () => {
           gutterBottom
           sx={{
             fontSize: isMobile ? "1.5rem" : "2rem",
-
-            textAlign: isMobile ? "center" : "center",
+            textAlign: "center",
           }}
         >
           {course.title} – Materials
@@ -77,19 +132,25 @@ const CourseMaterial = () => {
         </Breadcrumbs>
       </Box>
 
-      <Box sx={{ display: "flex", gap: 3, minHeight: "80vh", flexDirection: isResponsive ? "column" : "row", }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 3,
+          minHeight: "80vh",
+          flexDirection: isResponsive ? "column" : "row",
+        }}
+      >
         {/* Left Panel */}
         <Box
           sx={{
-             width: isResponsive ? "90%" : "20%",
-            bgcolor: "linear-gradient(to bottom, #f9f9ff, #eef3f8)",
-           p:isMobile? 2: 3,
+            width: isResponsive ? "90%" : "20%",
+            p: isMobile ? 2 : 3,
             borderRadius: 4,
             border: "1px solid #dce3f0",
             boxShadow: "0 6px 18px rgba(0,0,0,0.05)",
             height: "fit-content",
             transition: "all 0.3s ease-in-out",
-             mt: 5,
+            mt: 5,
           }}
         >
           <Typography
@@ -113,15 +174,14 @@ const CourseMaterial = () => {
               return (
                 <ListItem key={lesson.id} disablePadding sx={{ mb: 1 }}>
                   <ListItemButton
-                    selected={lesson.id === selectedLessonId}
+                    selected={isSelected}
                     onClick={() => setSelectedLessonId(lesson.id)}
                     sx={{
                       borderRadius: 2,
                       px: 2,
                       py: 1.5,
                       transition: "all 0.3s ease",
-
-                      color: isSelected ? "#black" : "#333",
+                      color: isSelected ? "#000" : "#333",
                       fontWeight: 600,
                     }}
                   >
@@ -148,11 +208,10 @@ const CourseMaterial = () => {
             variant="h5"
             fontWeight="bold"
             mb={3}
-            textAlign={"justify"}
             sx={{
               fontSize: isMobile ? "1.5rem" : "1.7rem",
               ml: isMobile ? 0 : 5,
-               mt: isMobile ? 2 : 0,
+              mt: isMobile ? 2 : 0,
               textAlign: isMobile ? "center" : "justify",
             }}
           >
@@ -165,8 +224,6 @@ const CourseMaterial = () => {
                   <Paper
                     elevation={6}
                     sx={{
-                      width: "100%",
-
                       p: 3,
                       borderRadius: 4,
                       textAlign: "center",
@@ -183,34 +240,21 @@ const CourseMaterial = () => {
                     </Typography>
                     <Divider sx={{ mb: 2 }} />
 
-                    <Typography variant="body1" mb={2} textAlign={"justify"}>
+                    <Typography variant="body1" mb={2} textAlign="justify">
                       💾 size: {mat.size}
                     </Typography>
-                    <Typography variant="body1" mb={2} textAlign={"justify"}>
+                    <Typography variant="body1" mb={2} textAlign="justify">
                       📄 Pages: {mat.pages}
                     </Typography>
-                    <Typography variant="body1" mb={2} textAlign={"justify"}>
+                    <Typography variant="body1" mb={2} textAlign="justify">
                       👤 author: {mat.author}
                     </Typography>
 
-                    {/* <Typography variant="body1" mb={2} textAlign={"justify"} >
-                           📝description: {mat.description}
-                        </Typography> */}
-
-                    <Box
-                      mt={2}
-                      sx={{
-                        // display: 'flex',
-                        // flexDirection: isMobile ? 'column' : 'row',
-
-                        p: 2,
-                        borderRadius: 3,
-                      }}
-                    >
+                    <Box mt={2} sx={{ p: 2, borderRadius: 3 }}>
                       <Button
                         variant="outlined"
                         target="_blank"
-                        rel="noopener noreferrer"
+                        href={mat.link}
                         sx={{
                           color: "#0288d1",
                           borderColor: "#0288d1",
@@ -228,12 +272,11 @@ const CourseMaterial = () => {
                         🔗 Open
                       </Button>
                       <br />
-
                       <Button
                         variant="contained"
                         color="secondary"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href={mat.download}
+                        download
                         sx={{
                           fontWeight: "bold",
                           px: 3,

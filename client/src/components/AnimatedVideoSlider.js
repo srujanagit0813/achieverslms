@@ -1,52 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import { Box, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
+import axios from 'axios';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-const sliderData = [
-  {
-    title: 'ANIMATED VIDEOS',
-    subtitle: 'Animated Videos: Learning Comes to Life',
-    buttonText: 'Start now',
-    image: 'https://img.freepik.com/premium-photo/online-learning-experience_117255-2614.jpg?semt=ais_hybrid&w=740',
-  },
-  {
-    title: 'ANIMATED VIDEOS',
-    subtitle: 'Animated Videos: Learning Comes to Life',
-    buttonText: 'Start now',
-    image: 'https://img.freepik.com/free-photo/asia-businesswoman-using-laptop-talk-colleagues-about-plan-video-call-meeting-living-room_7861-3171.jpg?semt=ais_hybrid&w=740',
-  },
-  {
-    title: 'ANIMATED VIDEOS',
-    subtitle: 'Animated Videos: Learning Comes to Life',
-    buttonText: 'Start now',
-    image: 'https://img.freepik.com/free-photo/employees-working-together-side-view_23-2150152250.jpg?semt=ais_hybrid&w=740',
-  },
-  {
-    title: 'ANIMATED VIDEOS',
-    subtitle: 'Animated Videos: Learning Comes to Life',
-    buttonText: 'Start now',
-    image: 'https://img.freepik.com/free-photo/young-student-sitting-table-use-laptop_1157-27564.jpg?semt=ais_hybrid&w=740',
-  },
-  {
-    title: 'ANIMATED VIDEOS',
-    subtitle: 'Animated Videos: Learning Comes to Life',
-    buttonText: 'Start now',
-    image: 'https://img.freepik.com/free-photo/young-woman-attending-online-class_23-2148854936.jpg?semt=ais_hybrid&w=740',
-  },
-  {
-    title: 'ANIMATED VIDEOS',
-    subtitle: 'Animated Videos: Learning Comes to Life',
-    buttonText: 'Start now',
-    image: 'https://img.freepik.com/free-photo/friends-attending-online-classes-together_23-2148854886.jpg?semt=ais_hybrid&w=740',
-  },
-];
-
 const AnimatedVideoSlider = () => {
+  const [sliderData, setSliderData] = useState([]);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:5000/animated-videos') // Change API endpoint if needed
+      .then((res) => {
+        setSliderData(res.data);
+      })
+      .catch((err) => {
+        console.error('Error fetching slider data:', err);
+      });
+  }, []);
 
   const settings = {
     dots: true,
@@ -129,7 +104,7 @@ const AnimatedVideoSlider = () => {
                 color: 'white',
                 textAlign: 'center',
                 px: isMobile ? 2 : 4,
-                mt:5
+                mt: 5
               }}
             >
               <Typography
