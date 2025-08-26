@@ -13,7 +13,9 @@ export class MaterialService {
   }
 
   async findAll() {
-    return this.prisma.material.findMany();
+    return this.prisma.material.findMany({
+  include: { lessonContent: true }
+});
   }
 
   async findOne(id: string) {

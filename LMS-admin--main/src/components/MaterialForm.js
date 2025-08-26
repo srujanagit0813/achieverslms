@@ -37,7 +37,6 @@ const initialState = {
   link: '',
   download: '',
   description: '',
-  
   lessonContentId: '',
 };
 
@@ -76,16 +75,15 @@ export default function MaterialManager() {
       console.error('Failed to fetch materials:', error);
     }
   };
+
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-
-   const handleChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
 
   const handleEdit = (material) => {
     setFormData({
@@ -131,54 +129,52 @@ export default function MaterialManager() {
     return true;
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // Capitalize only the first letter for enum compatibility
-  if (!['PDF', 'Video', 'Image'].includes(formData.type)) {
-  setSnackbar({ open: true, message: 'Type must be PDF, VIDEO, or IMAGE', severity: 'error' });
-  return;
-}
-
-const payload = {
-  ...formData,
-  pages: formData.pages ? parseInt(formData.pages, 10) : undefined,
-};
-
-
-  try {
-    setLoadingSubmit(true);
-
-    if (editId) {
-      await axios.put(`http://localhost:5000/materials/${editId}, payload`);
-      setSnackbar({ open: true, message: 'Material updated!', severity: 'success' });
-    } else {
-      await axios.post('http://localhost:5000/materials', payload);
-      setSnackbar({ open: true, message: 'Material created!', severity: 'success' });
+    if (!['PDF', 'Video', 'Image'].includes(formData.type)) {
+      setSnackbar({ open: true, message: 'Type must be PDF, VIDEO, or IMAGE', severity: 'error' });
+      return;
     }
 
+    const payload = {
+      ...formData,
+      pages: formData.pages ? parseInt(formData.pages, 10) : undefined,
+    };
+
+    try {
+      setLoadingSubmit(true);
+
+      if (editId) {
+        await axios.put(`http://localhost:5000/materials/${editId}`, payload);
+        setSnackbar({ open: true, message: 'Material updated!', severity: 'success' });
+      } else {
+        await axios.post('http://localhost:5000/materials', payload);
+        setSnackbar({ open: true, message: 'Material created!', severity: 'success' });
+      }
+
+      setOpen(false);
+      setFormData(initialState);
+      setEditId(null);
+      fetchMaterials();
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Save failed.';
+      console.error('Save failed:', error);
+      setSnackbar({
+        open: true,
+        message: Array.isArray(msg) ? msg.join(', ') : msg,
+        severity: 'error',
+      });
+    } finally {
+      setLoadingSubmit(false);
+    }
+  };
+
+  const handleClose = () => {
     setOpen(false);
     setFormData(initialState);
     setEditId(null);
-    fetchMaterials();
-  } catch (error) {
-    const msg = error.response?.data?.message || 'Save failed.';
-    console.error('Save failed:', error);
-    setSnackbar({
-      open: true,
-      message: Array.isArray(msg) ? msg.join(', ') : msg,
-      severity: 'error',
-    });
-  } finally {
-    setLoadingSubmit(false);
-  }
-};
-
-const handleClose = () => {
-  setOpen(false);
-  setFormData(initialState);
-  setEditId(null);
-};
+  };
 
   return (
     <Box sx={{ p: 4, mt: 5 }}>
@@ -196,10 +192,9 @@ const handleClose = () => {
             <TableRow>
               <TableCell>Label</TableCell>
               <TableCell>Type</TableCell>
-              <TableCell>Pages</TableCell> {/* <-- Added */}
+              <TableCell>Pages</TableCell>
               <TableCell>Size</TableCell>
               <TableCell>Link</TableCell>
-              
               <TableCell>Lesson</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
@@ -214,8 +209,9 @@ const handleClose = () => {
                 <TableCell>
                   <a href={material.link} target="_blank" rel="noopener noreferrer">View</a>
                 </TableCell>
-                
-                <TableCell>{material.lessonContent?.title || material.lessonContentId}</TableCell>
+                <TableCell>
+                  {material.lessonContent?.title || material.lessonContent?.label || 'N/A'}
+                </TableCell>
                 <TableCell align="right">
                   <IconButton onClick={() => handleEdit(material)} color="primary">
                     <EditIcon />
@@ -231,62 +227,78 @@ const handleClose = () => {
       </TableContainer>
 
       {/* Dialog Form */}
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm" sx={{
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={{
           '& .MuiDialog-paper': {
             borderRadius: 3,
             border: '2px solid',
             borderColor: 'whitesmoke',
             boxShadow: '0 20px 40px rgba(6, 6, 6, 0.72)',
             overflow: 'hidden',
-           marginLeft:'350px',
-           marginTop:'120px'
-          
+            marginLeft:'350px',
+            marginTop:'120px'
           },
         }}>
-        <DialogTitle sx={{ color: "primary.main", fontWeight: 800 ,fontSize:'24px',}}>{editId ? 'Edit Material' : 'Add Material'}</DialogTitle>
+        <DialogTitle sx={{ color: "primary.main", fontWeight: 800 ,fontSize:'24px'}}>
+          {editId ? 'Edit Material' : 'Add Material'}
+        </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2} direction="column" sx={{mt:2}}>
-              
               <Grid item>
                 <TextField label="Label" name="label" value={formData.label} onChange={handleChange} fullWidth required />
               </Grid>
               <Stack direction={'row'} spacing={3}>
-              <Grid item>
-                <TextField fullWidth select label="Lesson Content" name="lessonContentId" value={formData.lessonContentId} onChange={handleChange} sx={{width:'265px'}}>
-                  {loadingLessons ? (
-                    <MenuItem disabled>
-                      <CircularProgress size={20} sx={{ mr: 1 }} /> Loading...
-                    </MenuItem>
-                  ) : lessonContents.length > 0 ? (
-                    lessonContents.map((lesson) => (
-                      <MenuItem key={lesson.id} value={lesson.id}>
-                        {lesson.label || lesson.title || `${lesson.type}` - `${lesson.id}`}
+                <Grid item>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Lesson Content"
+                    name="lessonContentId"
+                    value={formData.lessonContentId}
+                    onChange={handleChange}
+                    sx={{width:'265px'}}
+                  >
+                    {loadingLessons ? (
+                      <MenuItem disabled>
+                        <CircularProgress size={20} sx={{ mr: 1 }} /> Loading...
                       </MenuItem>
-                    ))
-                  ) : (
-                    <MenuItem disabled>No lesson content found</MenuItem>
-                  )}
-                </TextField>
-              </Grid>
-              
-              <Grid item>
-                <TextField select label="Material Type" name="type" value={formData.type} onChange={handleChange} fullWidth required sx={{width:'265px'}}>
-                  {MATERIAL_TYPES.map((type) => (
-                    <MenuItem key={type} value={type}>
-                      {type}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
+                    ) : lessonContents.length > 0 ? (
+                      lessonContents.map((lesson) => (
+                        <MenuItem key={lesson.id} value={lesson.id}>
+                          {lesson.title || lesson.label}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem disabled>No lesson content found</MenuItem>
+                    )}
+                  </TextField>
+                </Grid>
+                <Grid item>
+                  <TextField
+                    select
+                    label="Material Type"
+                    name="type"
+                    value={formData.type}
+                    onChange={handleChange}
+                    fullWidth
+                    required
+                    sx={{width:'265px'}}
+                  >
+                    {MATERIAL_TYPES.map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
               </Stack>
               <Stack direction={'row'} spacing={3}>
-              <Grid item>
-                <TextField label="Pages" name="pages" type="number" value={formData.pages} onChange={handleChange} fullWidth sx={{width:'265px'}} />
-              </Grid>
-              <Grid item>
-                <TextField label="Size (MB)" name="size" value={formData.size} onChange={handleChange} fullWidth sx={{width:'265px'}} />
-              </Grid>
+                <Grid item>
+                  <TextField label="Pages" name="pages" type="number" value={formData.pages} onChange={handleChange} fullWidth sx={{width:'265px'}} />
+                </Grid>
+                <Grid item>
+                  <TextField label="Size (MB)" name="size" value={formData.size} onChange={handleChange} fullWidth sx={{width:'265px'}} />
+                </Grid>
               </Stack>
               <Grid item>
                 <TextField label="Link (URL)" name="link" value={formData.link} onChange={handleChange} fullWidth required />
@@ -297,18 +309,16 @@ const handleClose = () => {
               <Grid item>
                 <TextField label="Description" name="description" value={formData.description} onChange={handleChange} fullWidth multiline rows={3} />
               </Grid>
-              
-              
             </Grid>
             <DialogActions sx={{ mt: 2 }}>
-            <Button onClick={handleClose} variant="outlined" color="secondary" sx={{
-              borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 600,
-            }}>
-            Cancel
-          </Button>            
-            <Button variant="contained" type="submit" disabled={loadingSubmit}>
+              <Button onClick={handleClose} variant="outlined" color="secondary" sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 600,
+              }}>
+                Cancel
+              </Button>            
+              <Button variant="contained" type="submit" disabled={loadingSubmit}>
                 {loadingSubmit ? <CircularProgress size={20} /> : editId ? 'Update' : 'Save'}
               </Button>
             </DialogActions>
@@ -319,14 +329,14 @@ const handleClose = () => {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
-        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+        onClose={handleCloseSnackbar}
         anchorOrigin={{ 
           vertical: snackbar.severity === 'error' ? "bottom" : "top", 
           horizontal: "center" 
         }}
       >
         <Alert
-          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+          onClose={handleCloseSnackbar}
           severity={snackbar.severity}
           sx={{ width: '100%' }}
         >

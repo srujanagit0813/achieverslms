@@ -141,47 +141,48 @@ useEffect(() => {
         }}
       >
         {/* Left Panel */}
-        <Box
-          sx={{
-            width: isResponsive ? "90%" : "20%",
-            p: isMobile ? 2 : 3,
-            borderRadius: 4,
-            border: "1px solid #dce3f0",
-            boxShadow: "0 6px 18px rgba(0,0,0,0.05)",
-            height: "fit-content",
-            transition: "all 0.3s ease-in-out",
-            mt: 5,
-          }}
-        >
-          <Typography
-            variant="h6"
-            fontWeight="bold"
-            gutterBottom
-            sx={{
-              fontSize: "1.2rem",
-              color: "#333",
-              mb: 2,
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            📚 Lessons
-          </Typography>
-          <List sx={{ maxHeight: "65vh", overflowY: "auto" }}>
+       <Box
+  sx={{
+    width: isResponsive ? "90%" : "20%",
+    p: isMobile ? 2 : 3,
+    borderRadius: 4,
+    border: "1px solid #dce3f0",
+    boxShadow: "0 6px 18px rgba(0,0,0,0.05)",
+    height: "fit-content",
+    transition: "all 0.3s ease-in-out",
+    mt: 5,
+  }}
+>
+  <Typography
+    variant="h6"
+    fontWeight="bold"
+    gutterBottom
+    sx={{
+      fontSize: "1.2rem",
+      color: "#333",
+      mb: 2,
+      display: "flex",
+      alignItems: "center",
+      gap: 1,
+    }}
+  >
+    📚 Lessons
+  </Typography>
+    <List sx={{ maxHeight: "65vh", overflowY: "auto" }}>
             {course.lessons.map((lesson) => {
               const isSelected = lesson.id === selectedLessonId;
               return (
                 <ListItem key={lesson.id} disablePadding sx={{ mb: 1 }}>
                   <ListItemButton
-                    selected={isSelected}
+                    selected={lesson.id === selectedLessonId}
                     onClick={() => setSelectedLessonId(lesson.id)}
                     sx={{
                       borderRadius: 2,
                       px: 2,
                       py: 1.5,
                       transition: "all 0.3s ease",
-                      color: isSelected ? "#000" : "#333",
+
+                      color: isSelected ? "#black" : "#333",
                       fontWeight: 600,
                     }}
                   >
@@ -200,7 +201,8 @@ useEffect(() => {
               );
             })}
           </List>
-        </Box>
+</Box>
+
 
         {/* Right Panel */}
         <Box sx={{ width: isMobile ? "100%" : "75%", ml: isMobile ? 0 : 5 }}>
@@ -246,9 +248,7 @@ useEffect(() => {
                     <Typography variant="body1" mb={2} textAlign="justify">
                       📄 Pages: {mat.pages}
                     </Typography>
-                    <Typography variant="body1" mb={2} textAlign="justify">
-                      👤 author: {mat.author}
-                    </Typography>
+                  
 
                     <Box mt={2} sx={{ p: 2, borderRadius: 3 }}>
                       <Button

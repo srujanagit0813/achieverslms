@@ -57,7 +57,7 @@ export default function QuizQuestionPage() {
 
   const fetchQuestions = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/quiz-question');
+      const res = await axios.get('http://localhost:5000/quiz-questions');
       setQuizQuestions(res.data);
     } catch (error) {
       console.error('Failed to fetch quiz questions:', error);
