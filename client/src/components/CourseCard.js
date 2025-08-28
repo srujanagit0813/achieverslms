@@ -8,6 +8,7 @@ import {
   Avatar,
   Rating,
   Chip,
+  Stack,
 } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
@@ -59,23 +60,30 @@ const CourseCard = ({ course, index }) => {
         <CardContent>
           <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 1 }}>
             <Typography variant="body2">
+              <Stack direction='row'> 
               <MenuBookIcon fontSize="small" sx={{ mr: 0.5 }} />
               {course.lessons} Lesson
+              </Stack>
             </Typography>
             <Typography variant="body2">
+               <Stack direction='row'> 
               <AccessTimeIcon fontSize="small" sx={{ mr: 0.5 }} />
               {course.duration}
+              </Stack>
             </Typography>
           </Box>
-          <Typography fontWeight="bold" gutterBottom>
+          <Typography fontWeight="bold" gutterBottom sx={{textAlign:"justify",  lineHeight: "1.5rem",   // line height
+    minHeight: "3rem",      // 2 lines * lineHeight
+    display: "flex",
+    alignItems: "center",  }}>
             {course.title}
           </Typography>
           <Typography>
             <span style={{ color: "#673ab7", fontWeight: "bold" }}>
-              ${typeof course.discountedPrice === "number" ? course.discountedPrice.toFixed(2) : "0.00"}
+              ₹{typeof course.discountedPrice === "number" ? course.discountedPrice.toFixed(2) : "0.00"}
             </span>{" "}
             <span style={{ textDecoration: "line-through", color: "#aaa" }}>
-              ${typeof course.actualPrice === "number" ? course.actualPrice.toFixed(2) : "0.00"}
+              ₹{typeof course.actualPrice === "number" ? course.actualPrice.toFixed(2) : "0.00"}
             </span>{" "}
             {/* <span style={{ color: "red" }}>Free</span> */}
           </Typography>

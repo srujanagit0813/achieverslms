@@ -142,10 +142,10 @@ const CourseDetails = () => {
               }}
             >
               <Typography variant="h6" color="green" fontWeight={600}>
-                ${course.discountedPrice}
+                ₹{course.discountedPrice}
               </Typography>
               <Typography sx={{ textDecoration: "line-through", color: "red" }}>
-                ${course.actualPrice}
+                ₹{course.actualPrice}
                 
               </Typography>
               <Typography>
@@ -324,9 +324,9 @@ const CourseDetails = () => {
             />
             <Box sx={{ p: 3 }}>
               <Typography variant="h5" color="green" fontWeight={600}>
-                ${course.discountedPrice}
+                ₹{course.discountedPrice}
                 <Typography component="span" sx={{ ml: 1, textDecoration: "line-through", color: "red" }}>
-                  ${course.actualPrice}
+                  ₹{course.actualPrice}
                 </Typography>
                 {/* <Chip label="68% OFF" color="error" size="small" sx={{ ml: 2, fontWeight: "bold" }} /> */}
               </Typography>
