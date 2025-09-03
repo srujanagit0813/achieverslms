@@ -297,20 +297,23 @@ const CourseDetails = () => {
         {/* Right Panel */}
         <Grid item xs={12} md={6} sx={{ width: isMobile ? "100%" : "30%" }}>
           <Paper elevation={4} sx={{ borderRadius: 3, overflow: "hidden" }}>
-            {/* <Box sx={{ position: "relative", paddingTop: "56.25%" }}>
+            <Box sx={{ position: "relative", paddingTop: "56.25%" }}>
               <ReactPlayer
-                url={course.video}
+                url={course.videoUrl}
+            
                 controls
+
                 width="100%"
                 height="100%"
+                
                 style={{
                   position: "absolute",
                   top: 0,
                   left: 0,
                 }}
               />
-            </Box> */}
-        <Box
+            </Box>
+        {/* <Box
               component="img"
              src={imageUrl}
 
@@ -321,7 +324,7 @@ const CourseDetails = () => {
     objectFit: "cover",
     borderRadius: 2,
   }}
-            />
+            /> */}
             <Box sx={{ p: 3 }}>
               <Typography variant="h5" color="green" fontWeight={600}>
                 ₹{course.discountedPrice}

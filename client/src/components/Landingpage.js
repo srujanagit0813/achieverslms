@@ -18,7 +18,7 @@ const Landingpage = () => {
       <PopularSubjects/>
       <TrendingExams/>
       <PerfectCourseSection/>
-      <MaterialCoursesSection/>
+      {/* <MaterialCoursesSection/> */}
       
       
      
